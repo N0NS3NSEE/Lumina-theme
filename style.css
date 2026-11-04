@@ -1,18 +1,18 @@
 /* =========================================================================
-   Lumina — SillyTavern UI Theme
+   Lumina — SillyTavern UI Theme (mobile-first)
    Sleek · Modern · Animated · Rounded · Minimal
-   Silver-accented floating input · Avatar banner nameplates
+   Silver floating input · Avatar banner nameplates · Serif narration
    ========================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap');
 
 :root {
-  /* palette */
   --lumina-silver-1: #6f7784;
   --lumina-silver-2: #c9d0da;
   --lumina-silver-3: #ffffff;
   --lumina-silver-4: #aab2bd;
   --lumina-silver-5: #eef2f7;
+
   --lumina-bg-0: #0a0d13;
   --lumina-bg-1: #10141c;
   --lumina-glass: rgba(20, 25, 35, 0.55);
@@ -20,12 +20,17 @@
   --lumina-brd: rgba(255, 255, 255, 0.08);
   --lumina-text: #e7eaf0;
   --lumina-dim: #98a2b3;
+
   --lumina-radius: 16px;
   --lumina-radius-sm: 10px;
   --lumina-blur: 16px;
 
-  /* SillyTavern vars, kept in sync but not forced */
-  --mainFontFamily: 'Inter', system-ui, -apple-system, sans-serif;
+  /* fonts */
+  --lumina-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --lumina-narration: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
+  --lumina-display: 'Cinzel Decorative', 'Cinzel', serif;
+
+  --mainFontFamily: var(--lumina-body);
   --SmartThemeBodyColor: var(--lumina-text);
   --SmartThemeEmColor: var(--lumina-silver-5);
   --SmartThemeUnderlineColor: var(--lumina-silver-2);
@@ -39,13 +44,15 @@
 /* ---- Base canvas ---- */
 html,
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-family: var(--lumina-body) !important;
   color: var(--lumina-text);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
+  min-height: 100dvh;
   background:
     radial-gradient(1200px 800px at 8% -12%, rgba(180, 195, 215, 0.10), transparent 60%),
     radial-gradient(1000px 760px at 112% 6%, rgba(140, 155, 180, 0.10), transparent 55%),
@@ -68,7 +75,7 @@ body {
 }
 
 /* ==========================================================================
-   CHAT MESSAGES — stacked card w/ full-bleed avatar banner
+   CHAT MESSAGES — card + full-bleed avatar banner
    ========================================================================= */
 #chat .mes {
   position: relative;
@@ -79,7 +86,7 @@ body {
   backdrop-filter: blur(var(--lumina-blur)) saturate(130%);
   border: 1px solid var(--lumina-brd);
   border-radius: var(--lumina-radius);
-  margin: 12px 10px;
+  margin: 10px 8px;
   padding: 0 0 14px 0;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
@@ -88,7 +95,6 @@ body {
 }
 
 #chat .mes:hover {
-  transform: translateY(-2px);
   border-color: rgba(200, 214, 232, 0.3);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.36), 0 0 0 1px rgba(200, 214, 232, 0.12);
 }
@@ -98,7 +104,7 @@ body {
   border-color: rgba(200, 214, 232, 0.22);
 }
 
-/* ---- avatar stretches into a banner ---- */
+/* ---- avatar banner ---- */
 #chat .mes .mesAvatarWrapper {
   position: relative;
   width: 100%;
@@ -124,12 +130,9 @@ body {
   transition: transform 0.6s ease, filter 0.4s ease;
 }
 
-#chat .mes:hover .mesAvatarWrapper .avatar img {
-  transform: scale(1.04);
-  filter: brightness(0.7) saturate(1.08);
-}
+#chat .mes[is_user="true"] .avatar img { object-position: center top; }
 
-/* ---- nameplate floats over the banner ---- */
+/* ---- nameplate ---- */
 #chat .mes .mes_block { position: static; }
 
 #chat .mes .ch_name {
@@ -139,23 +142,28 @@ body {
   height: 74px;
   display: flex;
   align-items: center;
-  padding-left: 24px;
+  padding-left: 22px;
   z-index: 3;
-  font-family: 'Cinzel Decorative', 'Cinzel', serif;
-  font-size: 24px;
+  font-family: var(--lumina-display);
+  font-size: 23px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.6px;
   color: #f4f7fb;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
   pointer-events: none;
 }
 
-/* ---- message body spacing ---- */
+/* ---- narration body: fancy serif ---- */
 #chat .mes_text {
+  font-family: var(--lumina-narration);
   color: var(--lumina-text);
-  line-height: 1.6;
-  padding: 0 18px;
+  font-size: 1.18em;
+  line-height: 1.62;
+  letter-spacing: 0.2px;
+  padding: 0 20px;
 }
+
+#chat .mes_text em { font-style: italic; }
 
 #chat .mes_text blockquote {
   border-left: 3px solid var(--lumina-silver-4);
@@ -167,16 +175,14 @@ body {
 
 #chat .mes_text code,
 #chat .mes_text pre {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.82em;
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--lumina-brd);
   border-radius: var(--lumina-radius-sm);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* user avatar in the banner is also full-bleed */
-#chat .mes[is_user="true"] .avatar img { object-position: center top; }
-
-/* swipe / message buttons */
+/* buttons */
 .mes_buttons .fa-solid,
 .swipe_left,
 .swipe_right {
@@ -191,48 +197,40 @@ body {
 }
 
 /* ==========================================================================
-   FLOATING INPUT BAR — animated silver rim
+   FLOATING INPUT BAR — animated silver rim (safe-area aware)
    ========================================================================= */
 #send_form {
   position: fixed;
   left: 50%;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
-  width: min(760px, 92vw);
+  width: min(760px, calc(100vw - 24px));
   z-index: 1000;
   padding: 2px;
   border-radius: 22px;
   background:
-    /* interior fill */
     linear-gradient(rgba(12, 15, 21, 0.94), rgba(12, 15, 21, 0.94)) padding-box,
-    /* animated silver rim */
     linear-gradient(
       115deg,
-      #6f7784 0%,
-      #c9d0da 22%,
-      #ffffff 38%,
-      #aab2bd 52%,
-      #eef2f7 70%,
-      #7c848f 100%
+      #6f7784 0%, #c9d0da 22%, #ffffff 38%,
+      #aab2bd 52%, #eef2f7 70%, #7c848f 100%
     ) border-box;
   background-size: 100% 100%, 300% 100%;
   border: 2px solid transparent;
   box-shadow:
     0 18px 46px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  -webkit-backdrop-filter: blur(18px) saturate(130%);
-  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
   animation: lumina-silver 6s linear infinite;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 
-#send_form:hover,
 #send_form:focus-within {
   box-shadow:
     0 22px 60px rgba(0, 0, 0, 0.62),
     0 0 0 1px rgba(255, 255, 255, 0.12) inset,
     0 0 22px rgba(210, 220, 235, 0.22);
-  transform: translateX(-50%) translateY(-1px);
 }
 
 @keyframes lumina-silver {
@@ -241,15 +239,15 @@ body {
 }
 
 /* keep chat clear of the floating bar */
-#chat { padding-bottom: 132px !important; }
+#chat { padding-bottom: calc(126px + env(safe-area-inset-bottom, 0px)) !important; }
 
-/* textarea goes borderless, the bar frames it */
 #send_form #send_textarea {
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
   border-radius: 20px !important;
   color: var(--lumina-text) !important;
+  font-family: var(--lumina-body) !important;
   padding: 12px 16px !important;
 }
 #send_form #send_textarea::placeholder { color: #8a93a0; }
@@ -262,10 +260,7 @@ body {
   box-shadow: 0 6px 18px rgba(200, 214, 232, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-#send_but:hover {
-  transform: scale(1.08);
-  box-shadow: 0 10px 28px rgba(220, 230, 245, 0.4);
-}
+#send_but:hover { transform: scale(1.08); }
 
 /* ==========================================================================
    BUTTONS / MENUS / INPUTS
@@ -281,15 +276,10 @@ body {
 .menu_button_icon:hover {
   border-color: rgba(200, 214, 232, 0.4) !important;
   color: var(--lumina-silver-5) !important;
-  transform: translateY(-1px);
 }
 
-/* inputs outside the send bar */
-select,
-option,
-input[type="text"],
-input[type="number"],
-input[type="search"],
+select, option,
+input[type="text"], input[type="number"], input[type="search"],
 textarea {
   border-radius: var(--lumina-radius-sm) !important;
   border: 1px solid var(--lumina-brd) !important;
@@ -297,9 +287,7 @@ textarea {
   color: var(--lumina-text) !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-select:focus,
-input:focus,
-textarea:focus {
+select:focus, input:focus, textarea:focus {
   border-color: rgba(200, 214, 232, 0.6) !important;
   box-shadow: 0 0 0 3px rgba(200, 214, 232, 0.15);
   outline: none;
@@ -311,9 +299,10 @@ textarea:focus {
 #top-bar,
 #top-settings-holder {
   background: var(--lumina-glass) !important;
-  -webkit-backdrop-filter: blur(var(--lumina-blur)) saturate(140%);
-  backdrop-filter: blur(var(--lumina-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 1px solid var(--lumina-brd) !important;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .drawer-content,
@@ -322,8 +311,8 @@ textarea:focus {
 .popup,
 .dialog {
   background: var(--lumina-glass) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid var(--lumina-brd) !important;
   border-radius: var(--lumina-radius) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
@@ -332,16 +321,14 @@ textarea:focus {
 .drawer-toggle,
 .drawer-icon {
   border-radius: var(--lumina-radius-sm) !important;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 .drawer-toggle:hover,
 .drawer-icon:hover {
   background: rgba(200, 214, 232, 0.12) !important;
   color: var(--lumina-silver-5) !important;
-  transform: translateY(-1px);
 }
 
-/* character list */
 .character_select {
   border-radius: var(--lumina-radius-sm);
   transition: background-color 0.2s ease, transform 0.2s ease;
@@ -351,9 +338,70 @@ textarea:focus {
   transform: translateX(2px);
 }
 
-/* links */
 a { color: var(--lumina-silver-5); transition: color 0.2s ease; }
 a:hover { color: #ffffff; }
+
+/* ==========================================================================
+   MOBILE
+   ========================================================================= */
+@media (max-width: 640px) {
+  :root { --lumina-blur: 10px; }
+
+  #chat .mes {
+    margin: 8px 6px;
+    border-radius: 14px;
+    padding-bottom: 12px;
+  }
+
+  /* shorter banner on phones */
+  #chat .mes .mesAvatarWrapper { height: 56px; margin-bottom: 8px; }
+
+  #chat .mes .ch_name {
+    height: 56px;
+    font-size: 18px;
+    letter-spacing: 1.2px;
+    padding-left: 14px;
+  }
+
+  /* narration sized for small screens */
+  #chat .mes_text {
+    font-size: 1.06em;
+    line-height: 1.58;
+    padding: 0 14px;
+  }
+
+  /* input bar hugs the safe area */
+  #send_form {
+    width: calc(100vw - 16px);
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    border-radius: 18px;
+    animation-duration: 8s; /* calmer on small screens */
+  }
+  #send_form #send_textarea { padding: 11px 14px !important; }
+
+  #chat { padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important; }
+
+  /* touch targets, no hover reliance */
+  .mes_buttons .fa-solid {
+    padding: 6px;
+    font-size: 1.05em;
+  }
+
+  #send_but { width: 38px; height: 38px; }
+}
+
+/* very narrow / small phones */
+@media (max-width: 360px) {
+  #chat .mes .ch_name { font-size: 16px; }
+  #chat .mes_text { font-size: 1em; }
+}
+
+/* landscape phones — keep bar short so chat stays visible */
+@media (max-height: 460px) and (orientation: landscape) {
+  #chat .mes .mesAvatarWrapper { height: 44px; }
+  #chat .mes .ch_name { height: 44px; font-size: 16px; }
+  #chat { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important; }
+}
 
 /* ==========================================================================
    ANIMATIONS
@@ -364,12 +412,9 @@ a:hover { color: #ffffff; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #chat .mes,
-  .avatar,
-  #send_but,
-  #send_form,
-  .menu_button {
+  #chat .mes, #send_form, #send_but, .menu_button {
     animation: none !important;
     transition: none !important;
   }
-}
+                           }
+     
