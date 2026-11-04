@@ -1,0 +1,278 @@
+/* =========================================================================
+   Lumina — SillyTavern UI Theme
+   Sleek · Modern · Animated · Minimal · Rounded
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* palette */
+  --lumina-accent: #4f8cff;
+  --lumina-accent-2: #7cb0ff;
+  --lumina-glow: rgba(79, 140, 255, 0.45);
+  --lumina-bg-0: #0a0d13;
+  --lumina-bg-1: #10141c;
+  --lumina-glass: rgba(20, 25, 35, 0.55);
+  --lumina-glass-2: rgba(28, 34, 46, 0.55);
+  --lumina-brd: rgba(255, 255, 255, 0.08);
+  --lumina-text: #e7eaf0;
+  --lumina-dim: #98a2b3;
+  --lumina-radius: 16px;
+  --lumina-radius-sm: 10px;
+  --lumina-blur: 16px;
+
+  /* SillyTavern vars (kept in sync, not forced) */
+  --mainFontFamily: 'Inter', system-ui, -apple-system, sans-serif;
+  --SmartThemeBodyColor: var(--lumina-text);
+  --SmartThemeEmColor: var(--lumina-accent-2);
+  --SmartThemeUnderlineColor: var(--lumina-accent);
+  --SmartThemeQuoteColor: var(--lumina-accent-2);
+  --SmartThemeBlurTintColor: var(--lumina-glass);
+  --SmartThemeChatTintColor: var(--lumina-bg-1);
+  --SmartThemeBorderColor: var(--lumina-brd);
+  --SmartThemeShadowColor: rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Base canvas ---- */
+html,
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  color: var(--lumina-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background:
+    radial-gradient(1200px 800px at 8% -12%, rgba(79, 140, 255, 0.14), transparent 60%),
+    radial-gradient(1000px 760px at 112% 6%, rgba(124, 90, 255, 0.12), transparent 55%),
+    linear-gradient(160deg, var(--lumina-bg-0), var(--lumina-bg-1)) !important;
+  background-attachment: fixed !important;
+}
+
+/* ---- Scrollbars ---- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 140, 255, 0.32);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(79, 140, 255, 0.6); background-clip: padding-box; }
+
+/* ==========================================================================
+   CHAT MESSAGES
+   ========================================================================= */
+#chat .mes {
+  background: var(--lumina-glass);
+  -webkit-backdrop-filter: blur(var(--lumina-blur)) saturate(130%);
+  backdrop-filter: blur(var(--lumina-blur)) saturate(130%);
+  border: 1px solid var(--lumina-brd);
+  border-radius: var(--lumina-radius);
+  margin: 12px 10px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  animation: lumina-in 0.35s ease both;
+}
+
+#chat .mes:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79, 140, 255, 0.35);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.36), 0 0 0 1px rgba(79, 140, 255, 0.14);
+}
+
+#chat .mes[is_user="true"] {
+  background: linear-gradient(135deg, rgba(79, 140, 255, 0.14), rgba(79, 140, 255, 0.045));
+  border-color: rgba(79, 140, 255, 0.25);
+}
+
+#chat .mes_text { color: var(--lumina-text); line-height: 1.6; }
+#chat .ch_name {
+  color: var(--lumina-accent-2);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+#chat .mes_text blockquote {
+  border-left: 3px solid var(--lumina-accent);
+  background: rgba(79, 140, 255, 0.07);
+  border-radius: var(--lumina-radius-sm);
+  padding: 8px 14px;
+  margin: 8px 0;
+}
+
+#chat .mes_text code,
+#chat .mes_text pre {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--lumina-brd);
+  border-radius: var(--lumina-radius-sm);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* avatars */
+.avatar {
+  border-radius: 14px !important;
+  overflow: hidden;
+  border: 1px solid var(--lumina-brd);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.3);
+}
+.avatar img { border-radius: 14px; }
+
+/* swipe / message buttons */
+.mes_buttons .fa-solid,
+.swipe_left,
+.swipe_right {
+  color: var(--lumina-dim);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.mes_buttons .fa-solid:hover,
+.swipe_left:hover,
+.swipe_right:hover {
+  color: var(--lumina-accent-2);
+  transform: scale(1.12);
+}
+
+/* ==========================================================================
+   INPUT AREA
+   ========================================================================= */
+#send_textarea {
+  background: var(--lumina-glass-2) !important;
+  -webkit-backdrop-filter: blur(var(--lumina-blur));
+  backdrop-filter: blur(var(--lumina-blur));
+  border: 1px solid var(--lumina-brd) !important;
+  border-radius: var(--lumina-radius) !important;
+  color: var(--lumina-text) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 12px 16px;
+}
+#send_textarea:focus {
+  border-color: var(--lumina-accent) !important;
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.18);
+  outline: none;
+}
+#send_textarea::placeholder { color: var(--lumina-dim); }
+
+#send_but {
+  background: linear-gradient(135deg, var(--lumina-accent), var(--lumina-accent-2)) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px var(--lumina-glow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#send_but:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 28px var(--lumina-glow);
+}
+
+/* ==========================================================================
+   BUTTONS / MENUS / DROPDOWNS
+   ========================================================================= */
+.menu_button,
+.menu_button_icon,
+.drawer-content button,
+.dialog button {
+  border-radius: var(--lumina-radius-sm) !important;
+  transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.menu_button:hover,
+.menu_button_icon:hover {
+  border-color: rgba(79, 140, 255, 0.4) !important;
+  color: var(--lumina-accent-2) !important;
+  transform: translateY(-1px);
+}
+
+select,
+option,
+input[type="text"],
+input[type="number"],
+input[type="search"],
+textarea {
+  border-radius: var(--lumina-radius-sm) !important;
+  border: 1px solid var(--lumina-brd) !important;
+  background: rgba(14, 18, 26, 0.7) !important;
+  color: var(--lumina-text) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+select:focus,
+input:focus,
+textarea:focus {
+  border-color: var(--lumina-accent) !important;
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+  outline: none;
+}
+
+/* ==========================================================================
+   PANELS / DRAWERS / TOP BAR
+   ========================================================================= */
+#top-bar,
+#top-settings-holder {
+  background: var(--lumina-glass) !important;
+  -webkit-backdrop-filter: blur(var(--lumina-blur)) saturate(140%);
+  backdrop-filter: blur(var(--lumina-blur)) saturate(140%);
+  border-bottom: 1px solid var(--lumina-brd) !important;
+}
+
+.drawer-content,
+#left-nav-panel,
+#right-nav-panel,
+.popup,
+.dialog {
+  background: var(--lumina-glass) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--lumina-brd) !important;
+  border-radius: var(--lumina-radius) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.drawer-toggle,
+.drawer-icon {
+  border-radius: var(--lumina-radius-sm) !important;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.drawer-toggle:hover,
+.drawer-icon:hover {
+  background: rgba(79, 140, 255, 0.14) !important;
+  color: var(--lumina-accent-2) !important;
+  transform: translateY(-1px);
+}
+
+/* character list */
+.character_select {
+  border-radius: var(--lumina-radius-sm);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.character_select:hover {
+  background: rgba(79, 140, 255, 0.1);
+  transform: translateX(2px);
+}
+
+/* links & accents */
+a { color: var(--lumina-accent-2); transition: color 0.2s ease; }
+a:hover { color: var(--lumina-accent); }
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================= */
+@keyframes lumina-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #chat .mes,
+  .avatar,
+  #send_but,
+  .menu_button {
+    animation: none !important;
+    transition: none !important;
+  }
+    }
+  
