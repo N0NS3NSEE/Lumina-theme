@@ -1,11 +1,17 @@
 /* =========================================================================
    Lumina — SillyTavern UI Theme (mobile-only)
    Sleek · Modern · Animated · Rounded · Minimal
-   Silver floating input · Avatar banner nameplates · Serif narration
-   Designed for phones. No desktop layout branching.
+   Glass-edge floating composer (focus sheen) · Avatar banners · Serif narration
    ========================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500;1,600&family=JetBrains+Mono:wght@400&display=swap');
+
+/* The sheen angle must be a registered angle to animate inside conic-gradient. */
+@property --lumina-sheen {
+  syntax: '<angle>';
+  initial-value: 84deg;
+  inherits: false;
+}
 
 :root {
   --lumina-silver-1: #6f7784;
@@ -16,19 +22,37 @@
 
   --lumina-bg-0: #0a0d13;
   --lumina-bg-1: #10141c;
-  --lumina-glass: rgba(20, 25, 35, 0.7);
-  --lumina-glass-2: rgba(28, 34, 46, 0.7);
+  --lumina-panel: #10141c;                 /* solid fill for glass edges */
+  --lumina-glass: rgba(20, 25, 35, 0.55);
   --lumina-brd: rgba(255, 255, 255, 0.08);
   --lumina-text: #e7eaf0;
   --lumina-dim: #98a2b3;
 
-  --lumina-radius: 16px;
+  --lumina-radius: 14px;
   --lumina-radius-sm: 10px;
-  --lumina-blur: 12px;
+  --lumina-blur: 10px;
 
+  /* fonts */
   --lumina-body: 'Inter', system-ui, -apple-system, sans-serif;
   --lumina-narration: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
   --lumina-display: 'Cinzel Decorative', 'Cinzel', serif;
+  --lumina-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* silver sheen stops for the composer edge */
+  --lumina-sheen-idle:
+    rgba(111, 119, 132, 0.55),
+    rgba(201, 208, 218, 0.35) 25%,
+    rgba(160, 170, 184, 0.30) 50%,
+    rgba(238, 242, 247, 0.45) 75%,
+    rgba(111, 119, 132, 0.55);
+  --lumina-sheen-live:
+    rgba(111, 119, 132, 0.9),
+    rgba(201, 208, 218, 0.95) 20%,
+    #ffffff 35%,
+    rgba(170, 178, 189, 0.85) 55%,
+    #eef2f7 72%,
+    rgba(124, 132, 143, 0.9) 90%,
+    rgba(111, 119, 132, 0.9);
 
   --mainFontFamily: var(--lumina-body);
   --SmartThemeBodyColor: var(--lumina-text);
@@ -41,9 +65,8 @@
   --SmartThemeShadowColor: rgba(0, 0, 0, 0.5);
 }
 
-/* ---- Base canvas ---- */
-html,
-body {
+/* ---- Base ---- */
+html, body {
   font-family: var(--lumina-body) !important;
   color: var(--lumina-text);
   -webkit-font-smoothing: antialiased;
@@ -62,15 +85,17 @@ body {
   background-attachment: fixed !important;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: rgba(180, 195, 215, 0.28);
   border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 /* ==========================================================================
-   CHAT MESSAGES — card + full-bleed avatar banner
+   MESSAGES — card + full-bleed avatar banner
    ========================================================================= */
 #chat .mes {
   position: relative;
@@ -81,112 +106,97 @@ body {
   backdrop-filter: blur(var(--lumina-blur)) saturate(130%);
   border: 1px solid var(--lumina-brd);
   border-radius: var(--lumina-radius);
-  margin: 10px 8px;
+  margin: 8px 6px;
   padding: 0 0 12px 0;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
   animation: lumina-in 0.35s ease both;
-  max-width: calc(100% - 16px) !important;
+  max-width: calc(100% - 12px) !important;
   box-sizing: border-box;
 }
 
-#chat .mes:active {
-  border-color: rgba(200, 214, 232, 0.28);
-}
+#chat .mes:active { border-color: rgba(200, 214, 232, 0.28); }
 
-#chat .mes[is_user="true"],
-#chat .mes[is_user="1"],
-#chat .mes.is_user {
+#chat .mes[is_user="true"] {
   background: linear-gradient(135deg, rgba(200, 214, 232, 0.1), rgba(200, 214, 232, 0.03));
   border-color: rgba(200, 214, 232, 0.22);
 }
 
-/* ---- Avatar Banner (using native .avatar) ---- */
-#chat .mes .avatar {
-  position: relative !important;
-  width: 100% !important;
-  height: 58px !important;
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  border: none !important;
+/* avatar banner + legibility overlay */
+#chat .mes .mesAvatarWrapper {
+  position: relative;
+  width: 100%;
+  height: 56px;
+  margin: 0 0 8px 0;
   overflow: hidden;
-  order: 1;
 }
 
-#chat .mes .avatar::after {
+#chat .mes .mesAvatarWrapper::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(10, 13, 19, 0.88) 0%, rgba(10, 13, 19, 0.45) 55%, transparent 100%);
+  background: linear-gradient(90deg, rgba(10, 13, 19, 0.85) 0%, rgba(10, 13, 19, 0.4) 50%, transparent 100%);
   z-index: 2;
   pointer-events: none;
 }
 
-#chat .mes .avatar img {
+#chat .mes .mesAvatarWrapper .avatar {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
-  object-position: center 28% !important;
-  filter: brightness(0.75) saturate(1.05);
-  transition: transform 0.6s ease;
+  max-width: none !important;
+  border-radius: 0 !important;
+  border: none !important;
 }
 
-#chat .mes[is_user="true"] .avatar img,
-#chat .mes[is_user="1"] .avatar img,
-#chat .mes.is_user .avatar img {
-  object-position: center top !important;
+#chat .mes .mesAvatarWrapper .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+  filter: brightness(0.7) saturate(1.05);
+  transition: transform 0.6s ease, filter 0.4s ease;
 }
 
-/* ---- Message Block & Nameplate ---- */
-#chat .mes .mes_block {
-  position: static !important;
-  order: 2;
-  width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
+#chat .mes[is_user="true"] .avatar img { object-position: center top; }
+
+/* nameplate */
+#chat .mes .mes_block { position: static; }
 
 #chat .mes .ch_name {
   position: absolute;
   top: 0;
   left: 0;
-  height: 58px;
+  height: 56px;
   display: flex;
   align-items: center;
-  padding-left: 16px;
+  padding-left: 14px;
   z-index: 3;
   font-family: var(--lumina-display) !important;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 1.2px;
   color: #f4f7fb;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
   pointer-events: none;
-  max-width: calc(100% - 20px);
+  max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-#chat .mes .name_block {
-  display: none !important;
-}
-
-/* ---- Message Text ---- */
+/* body: Inter for dialogue/structure */
 #chat .mes_text {
   font-family: var(--lumina-body);
   color: var(--lumina-text);
-  font-size: 1.04em;
-  line-height: 1.6;
+  font-size: 1.06em;
+  line-height: 1.58;
   letter-spacing: 0.2px;
-  padding: 12px 16px 4px 16px;
+  padding: 0 14px;
   word-wrap: break-word;
   overflow-wrap: anywhere;
 }
 
-/* Narration / Italic prose */
+/* narration / italic prose in the fancy serif */
 #chat .mes_text em,
 #chat .mes_text i,
 #chat .mes_text .narration,
@@ -206,9 +216,11 @@ body {
   margin: 8px 0;
 }
 
+/* code stays mono, never claims the serif override */
 #chat .mes_text code,
 #chat .mes_text pre {
-  font-family: ui-monospace, monospace;
+  font-family: var(--lumina-mono) !important;
+  font-style: normal !important;
   font-size: 0.82em;
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--lumina-brd);
@@ -216,14 +228,7 @@ body {
   overflow-x: auto;
 }
 
-/* Touch-sized message buttons */
-.mes_buttons {
-  padding: 4px 12px 8px 12px;
-  display: flex;
-  gap: 8px;
-  opacity: 0.85;
-}
-
+/* touch message buttons */
 .mes_buttons .fa-solid,
 .swipe_left,
 .swipe_right {
@@ -234,78 +239,69 @@ body {
 }
 .mes_buttons .fa-solid:active,
 .swipe_left:active,
-.swipe_right:active {
-  color: var(--lumina-silver-5);
-}
+.swipe_right:active { color: var(--lumina-silver-5); }
 
 /* ==========================================================================
-   FLOATING INPUT BAR — Animated Silver Rim
+   COMPOSER — floating, glass edge, silver sheen on focus
    ========================================================================= */
 #send_form {
   position: fixed;
   left: 50%;
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
-  width: calc(100vw - 20px);
+  width: calc(100vw - 16px);
   z-index: 1000;
-  padding: 2px;
-  border-radius: 20px;
+  --lumina-composer-fill: rgba(16, 20, 28, 0.94);
+  border: 1px solid transparent !important;
+  border-radius: 22px !important;
   background:
-    linear-gradient(rgba(12, 15, 21, 0.95), rgba(12, 15, 21, 0.95)) padding-box,
-    linear-gradient(
-      115deg,
-      #6f7784 0%, #c9d0da 22%, #ffffff 38%,
-      #aab2bd 52%, #eef2f7 70%, #7c848f 100%
-    ) border-box;
-  background-size: 100% 100%, 300% 100%;
-  border: 2px solid transparent;
+    linear-gradient(var(--lumina-composer-fill), var(--lumina-composer-fill)) padding-box,
+    conic-gradient(from 84deg, var(--lumina-sheen-idle)) border-box !important;
   box-shadow:
     0 14px 34px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   -webkit-backdrop-filter: blur(12px) saturate(130%);
   backdrop-filter: blur(12px) saturate(130%);
-  animation: lumina-silver 8s linear infinite;
 }
 
-#send_form:focus-within {
-  box-shadow:
-    0 18px 44px rgba(0, 0, 0, 0.62),
-    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-    0 0 18px rgba(210, 220, 235, 0.2);
+#send_form:has(#send_textarea:focus) {
+  background:
+    linear-gradient(var(--lumina-composer-fill), var(--lumina-composer-fill)) padding-box,
+    conic-gradient(from var(--lumina-sheen), var(--lumina-sheen-live)) border-box !important;
+  animation: lumina-composer-sheen 3.2s linear infinite;
 }
 
-@keyframes lumina-silver {
-  0%   { background-position: 0 0, 0% 50%; }
-  100% { background-position: 0 0, 300% 50%; }
-}
+@keyframes lumina-composer-sheen { to { --lumina-sheen: 444deg; } }
 
-#chat { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important; }
+/* keep chat clear of the floating bar */
+#chat { padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important; }
 
 #send_form #send_textarea {
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-  border-radius: 16px !important;
+  border-radius: 20px !important;
   color: var(--lumina-text) !important;
   font-family: var(--lumina-body) !important;
+  font-size: 16px !important; /* stops iOS zoom-on-focus */
   padding: 12px 14px !important;
-  font-size: 16px !important; /* prevents iOS zoom on focus */
+  min-height: 44px !important;
 }
-#send_form #send_textarea::placeholder { color: #8a93a0; }
+#send_form #send_textarea::placeholder { color: #8a93a0 !important; text-align: start; }
 
 #send_but {
-  background: linear-gradient(135deg, #aab2bd, #eef2f7) !important;
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.96), rgba(222, 222, 222, 0.86)) !important;
   border: none !important;
   border-radius: 50% !important;
   color: #0a0d13 !important;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   box-shadow: 0 6px 16px rgba(200, 214, 232, 0.3);
 }
 #send_but:active { transform: scale(0.94); }
 
 /* ==========================================================================
-   UI CONTROLS & PANELS
+   BUTTONS / INPUTS (glass-edge where bordered)
    ========================================================================= */
 .menu_button,
 .menu_button_icon,
@@ -315,21 +311,23 @@ body {
   min-height: 40px;
 }
 
-select, option,
-input[type="text"], input[type="number"], input[type="search"],
-textarea {
+select, input[type="text"], input[type="number"], input[type="search"],
+textarea:not(#send_textarea) {
   border-radius: var(--lumina-radius-sm) !important;
   border: 1px solid var(--lumina-brd) !important;
   background: rgba(14, 18, 26, 0.7) !important;
   color: var(--lumina-text) !important;
-  font-size: 16px;
+  font-size: 16px; /* iOS zoom guard */
 }
-select:focus, input:focus, textarea:focus {
+select:focus, input:focus, textarea:not(#send_textarea):focus {
   border-color: rgba(200, 214, 232, 0.6) !important;
   box-shadow: 0 0 0 3px rgba(200, 214, 232, 0.15);
   outline: none;
 }
 
+/* ==========================================================================
+   TOP BAR + PANELS — full-screen drawers on phones
+   ========================================================================= */
 #top-bar,
 #top-settings-holder {
   background: var(--lumina-glass) !important;
@@ -339,18 +337,38 @@ select:focus, input:focus, textarea:focus {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
+/* panels fill the phone screen, glass-edged on the sides that show */
 .drawer-content,
 #left-nav-panel,
 #right-nav-panel,
 .popup,
 .dialog {
-  background: var(--lumina-glass) !important;
+  background: var(--lumina-panel) !important;
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid var(--lumina-brd) !important;
   border-radius: var(--lumina-radius) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (max-width: 1000px) {
+  body:not(.movingUI) #top-settings-holder .drawer-content,
+  body:not(.movingUI) #right-nav-panel,
+  body:not(.movingUI) #left-nav-panel,
+  body:not(.movingUI) .drawer-content.openDrawer {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border-width: 0 !important;
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    overflow-y: auto !important;
+  }
 }
 
 .drawer-toggle,
@@ -360,8 +378,32 @@ select:focus, input:focus, textarea:focus {
   min-height: 40px;
 }
 
+.character_select {
+  border-radius: var(--lumina-radius-sm);
+  min-height: 44px;
+}
+.character_select:active { background: rgba(200, 214, 232, 0.12); }
+
 a { color: var(--lumina-silver-5); }
 
+/* ==========================================================================
+   SMALL / LANDSCAPE PHONES
+   ========================================================================= */
+@media (max-width: 360px) {
+  #chat .mes .ch_name { font-size: 16px; letter-spacing: 1px; }
+  #chat .mes_text { font-size: 1em; }
+  #send_form { width: calc(100vw - 12px); }
+}
+
+@media (max-height: 460px) and (orientation: landscape) {
+  #chat .mes .mesAvatarWrapper { height: 44px; }
+  #chat .mes .ch_name { height: 44px; font-size: 15px; }
+  #chat { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================= */
 @keyframes lumina-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -372,4 +414,5 @@ a { color: var(--lumina-silver-5); }
     animation: none !important;
     transition: none !important;
   }
-                    }
+  #send_form:has(#send_textarea:focus) { --lumina-sheen: 84deg; } /* hold the glint still */
+}
