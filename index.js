@@ -1,5 +1,4 @@
-// Lumina — CSS-only UI theme.
-// No runtime behavior required; style.css does the work.
+// Lumina — CSS-only UI theme. All visuals live in style.css.
 
 export function onEnable() {
   console.info('[Lumina] theme enabled');
